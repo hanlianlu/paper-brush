@@ -12,7 +12,9 @@ Every picture is a short stack of coloured paper shapes, each cut along a pen-to
 
 The bundled example drawings render to these (yours to use):
 
-<p><img src="docs/example.png" width="260"> <img src="docs/banner.png" width="520"></p>
+![example portrait drawn from the bundled drawings file](docs/example.png)
+
+![example banner drawn from the bundled drawings file](docs/banner.png)
 
 ## Install
 
@@ -35,7 +37,6 @@ skills/paper-brush/
   references/engine.md             the renderer, paper.py, as one code block (numpy + OpenCV)
   references/style.md              the style rules that make it read as paper
   references/example_drawings.md   a portrait and a banner to start from
-examples/portraits/                twelve example avatars (all rights reserved, see License)
 ```
 
 The renderer lives in a Markdown code block so the plugin holds only text and images. Claude saves it as `paper.py`
@@ -54,4 +55,4 @@ It reads and writes local image files only: no network, no hooks, nothing runs o
 ## License
 
 - **Code and docs: [MIT](LICENSE).** Free to use, modify and ship, commercially too. Pictures you draw with it are yours.
-- **Example avatars** (`examples/`, `docs/avatars.png`): © hanlianlu, **all rights reserved**. They are here to show the style; please don't copy, redistribute or use them in your own work. Draw your own instead, that's what the brush is for.
+- **Example avatars** (the twelve portraits above and the files in the examples folder): © hanlianlu, **all rights reserved**. They are here to show the style; please don't copy, redistribute or use them in your own work. Draw your own instead, that's what the brush is for.

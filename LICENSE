@@ -1,3 +1,17 @@
+paper-brush is licensed in two parts.
+
+1. Code and documentation: everything in this repository except the image files
+   listed in part 2 is released under the MIT License below.
+
+2. Example images: the pictures in examples/ and docs/avatars.png are NOT
+   covered by the MIT License. Copyright (c) 2026 hanlianlu. All rights reserved.
+   They are shown only to demonstrate the style. You may view them here, but you
+   may not copy, modify, redistribute or use them (commercially or otherwise),
+   including as training data or as a reference to imitate, without written
+   permission. Pictures you make yourself with this software are yours.
+
+----------------------------------------------------------------------------
+
 MIT License
 
 Copyright (c) 2026 hanlianlu

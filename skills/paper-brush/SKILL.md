@@ -36,6 +36,35 @@ fine even grain over everything.
 6. **Deliver** at the project's size and format (downscale with Lanczos; JPEG q≈88 or PNG). Images stay ≤ 2K.
    If the project watermarks its art, seal after approval, before shipping.
 
+## Matching an existing set
+
+When new pictures must join a set that already has a look (more avatars beside approved ones), the order is
+**rules first, then draw, then iterate**:
+
+1. **Study the references and write the rules down.** Zoom in and measure: how edges are built, tones per material,
+   where shade shapes sit and how thin they are, feature sizes and positions on the head's axes, how much of the
+   frame the head takes, paper colour and grain.
+2. **Calibrate**: redraw one reference with the brush, put it beside the original, adjust until they match.
+3. **Lift the parts** that carry the style (eyes, brows, ear inners) from the references:
+   `uv run <skill dir>/scripts/paper.py lift REF.png X Y [tol] --eyes x1,y1,x2,y2` prints the flat shape under pixel
+   X,Y as nodes on that head's axes. Overlay to check; move the seed if it lands on skin.
+4. **Draw over the source**: `uv run <skill dir>/scripts/paper.py grid SOURCE.jpg grid.png` gives a gridded copy
+   (lines every 20 px, labels every 100) to read coordinates off. Few nodes per shape: a face about 16, a hair mass 20–40.
+5. **Mix-in test before showing anyone**: interleave the new pictures with the references in one grid at thumbnail
+   size (about 480 px). If a new one can be picked out, it is not done. Then check each at full size beside its
+   closest reference.
+
+What does not work: shapes from imagination (every face comes out the same); tracing a realistic painting by colour
+(copies its lumps); auto-vectorising references (blotchy); copying feature positions straight off a realistic face
+(the mouth sits too low and the face reads long and old); shade shapes taken from a painting's dark areas (stains).
+
+Typical face placement on the head's axes (measure your own set): brows about y −0.8, parallel to the eye line;
+nose a short hook on the far side, x −0.3 to −0.65, y 0.45 to 1.15; mouth about 1.1 units wide at y 1.6 to 1.8,
+nearly parallel to the eyes, both ends at about the same height (a raised end reads as a smirk); chin y 2.8 to 3.1.
+Give every character its own hair silhouette, eye and brow shape, and palette, or the set drifts toward one face.
+For tight curls, plaits and wool use `scallop()`; for knit collars `ribs()`; for lenses and buttons `oval()`
+(`from paper import scallop, ribs, oval`).
+
 ## Faces: reusable parts
 
 For a matching set of faces, give each drawing `"eyes": ((x, y), (x, y))`. That defines the head's own axes (x along
@@ -54,6 +83,6 @@ the eye line, y down the face, unit = half the eye distance), so features can be
 - Several layers with the same `"name"` add up (union), handy for a body made of two pieces.
 - `"fade"` points are in grid coordinates: strong at the first, gone at the second.
 - `"soft"` is in grid units; keep it for blush and glows only.
-- Drawings can `from paper import flow` to build helpers (curl scallops, plait bumps): the engine folder is on the path.
+- Drawings can `from paper import flow, scallop, ribs, oval`: the engine folder is on the path.
 - Don't let a drawing drift into many tiny shapes or outlines; if a detail needs a line, ask whether a second tone
   shape would say it better.

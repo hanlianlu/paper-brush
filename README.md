@@ -4,6 +4,8 @@ An [Agent Skill](https://docs.claude.com/en/docs/agents-and-tools/agent-skills) 
 
 ![a set of twelve avatars in the paper-brush style](docs/avatars.png)
 
+The first five set the style; the other seven were drawn with this brush to join them, so that the new ones cannot be picked out of the set. That is what the skill is best at: extending a look you already have.
+
 <sub>Example avatars © hanlianlu, all rights reserved: not covered by the MIT License (see below).</sub>
 
 Every picture is a short stack of coloured paper shapes, each cut along a pen-tool path: a few nodes, long arcs, crisp corners. Depth comes from clean second-tone shapes (often one hard edge and one that fades), never from outlines or gradients; a soft blush is the only blur, and a fine paper grain goes over everything. The same drawing file always renders the same pixels, so a whole set stays in one hand and any shape can be nudged by editing a number. No image model involved.

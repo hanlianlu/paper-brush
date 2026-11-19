@@ -39,6 +39,10 @@ of such lists (several pieces, one layer); pieces listed under "holes" are cut o
 
     uv run paper.py DRAWINGS.py OUT_DIR [name ...]      # draws DRAWINGS.py's DRAWINGS dict (or KIDS) to OUT_DIR/<name>.png
     uv run paper.py nodes MASK.png [scale]              # prints pen nodes for the white shape(s) in a mask: a starting point
+    uv run paper.py grid IMAGE OUT.png [step]           # a gridded copy of a reference, to read coordinates off
+    uv run paper.py lift IMAGE X Y [tol] [--eyes x1,y1,x2,y2]   # the flat shape under pixel X,Y as nodes (on the head's axes with --eyes)
+
+Helpers for drawings files: scallop() for curls, plaits and wool; ribs() for knit bands; oval().
 """
 import importlib.util
 import sys
@@ -251,6 +255,75 @@ def nodes_of(mask, corner_deg=128, span=9, eps=2.2, scale=1.0):
     return out
 
 
+# ---- helpers for building layers (a drawings file can `from paper import scallop, ribs, oval`)
+
+def along(nodes):
+    """A function v -> point at fraction v of the open curve through `nodes`, and the curve's length."""
+    pts = flow(nodes, closed=False, per=40)
+    t = np.concatenate([[0], np.cumsum(np.linalg.norm(np.diff(pts, axis=0), axis=1))])
+    return (lambda v: np.array([np.interp(v * t[-1], t, pts[:, 0]), np.interp(v * t[-1], t, pts[:, 1])])), t[-1]
+
+
+def scallop(base, step, bulge, side=-1, skip=0):
+    """Round bumps along an open curve (tight curls, plaits, wool, clouds): valleys are corners on the curve, crests
+    swell out by `bulge`, no two quite alike. side=-1 swells outward on a clockwise outline. Splice into a closed path."""
+    at, length = along(base)
+    n, out = max(2, round(length / step)), []
+    for i in range(n):
+        a, b = at(i / n), at((i + 1) / n)
+        d = b - a
+        nrm = np.array([-d[1], d[0]]) / (np.linalg.norm(d) + 1e-9) * side * bulge * (1 + 0.25 * np.sin(i * 2.4 + skip))
+        out += [(a[0], a[1], "c"), tuple(a + d * 0.22 + nrm * 0.8), tuple(a + d * 0.5 + nrm * 1.1), tuple(a + d * 0.78 + nrm * 0.8)]
+    return out + [tuple(at(1.0)) + ("c",)]
+
+
+def ribs(inner, outer, n, color, w=1.6, span=(0.18, 0.86)):
+    """Knit ribs: n short strokes across a band between two open curves (returns a list of stroke layers)."""
+    (a, _), (b, _) = along(inner), along(outer)
+    return [{"stroke": [tuple(a(v) + (b(v) - a(v)) * span[0]), tuple(a(v) + (b(v) - a(v)) * span[1])], "w": (w, w), "color": color}
+            for v in ((i + 0.5) / n for i in range(n))]
+
+
+def oval(cx, cy, rx, ry, turn=0.0, n=8):
+    """Flow nodes of an ellipse (lenses, buttons, eyes)."""
+    c, s = np.cos(np.radians(turn)), np.sin(np.radians(turn))
+    return [(cx + rx * np.cos(a) * c - ry * np.sin(a) * s, cy + rx * np.cos(a) * s + ry * np.sin(a) * c)
+            for a in (2 * np.pi * i / n for i in range(n))]
+
+
+# ---- reading a reference picture
+
+def grid(img, step=20):
+    """A copy of a picture with a coordinate grid: thin lines every `step` px, red lines and labels every 5 steps."""
+    g = img.copy()
+    h, w = g.shape[:2]
+    for x in range(0, w, step):
+        cv2.line(g, (x, 0), (x, h), (0, 0, 220) if x % (step * 5) == 0 else (255, 255, 255), 1)
+    for y in range(0, h, step):
+        cv2.line(g, (0, y), (w, y), (0, 0, 220) if y % (step * 5) == 0 else (255, 255, 255), 1)
+    for x in range(0, w, step * 5):
+        cv2.putText(g, str(x), (x + 2, 12), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 220), 1, cv2.LINE_AA)
+    for y in range(step * 5, h, step * 5):
+        cv2.putText(g, str(y), (2, y - 3), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 220), 1, cv2.LINE_AA)
+    return g
+
+
+def lift(img_bgr, x, y, tol=18):
+    """The flat shape under pixel (x, y) of a flat reference picture, as a boolean mask (for nodes_of)."""
+    m = np.zeros((img_bgr.shape[0] + 2, img_bgr.shape[1] + 2), np.uint8)
+    cv2.floodFill(img_bgr.copy(), m, (int(x), int(y)), 0, (tol,) * 3, (tol,) * 3, 4 | cv2.FLOODFILL_MASK_ONLY | cv2.FLOODFILL_FIXED_RANGE | (255 << 8))   # within tol of the seed colour
+    return m[1:-1, 1:-1] > 0
+
+
+def to_head(nodes, eyes):
+    """Picture coordinates -> the head's axes (origin between the eyes, unit = half the eye distance), for parts.py."""
+    el, er = (np.array(v, float) for v in eyes)
+    c, d = (el + er) / 2, er - el
+    u = np.linalg.norm(d) / 2
+    ax, ay = d / (2 * u), np.array([-d[1], d[0]]) / (2 * u)
+    return [(round(float((np.array(n[:2]) - c) @ ax / u), 3), round(float((np.array(n[:2]) - c) @ ay / u), 3)) + tuple(n[2:]) for n in nodes]
+
+
 def load(path):
     """Import a drawings file (its folder goes on sys.path, so a parts.py beside it is found)."""
     path = Path(path).resolve()
@@ -268,7 +341,17 @@ def load(path):
 
 if __name__ == "__main__":
     a = sys.argv[1:]
-    if len(a) >= 2 and a[0] == "nodes":
+    if len(a) in (3, 4) and a[0] == "grid":
+        cv2.imwrite(a[2], grid(cv2.imread(a[1]), int(a[3]) if len(a) > 3 else 20))
+        print("wrote", a[2])
+    elif len(a) >= 4 and a[0] == "lift":
+        eyes = None
+        if "--eyes" in a:
+            v = [float(t) for t in a[a.index("--eyes") + 1].split(",")]
+            eyes, a = ((v[0], v[1]), (v[2], v[3])), a[:a.index("--eyes")]
+        pieces = nodes_of(lift(cv2.imread(a[1]), int(a[2]), int(a[3]), int(a[4]) if len(a) > 4 else 18))
+        print(to_head(pieces[0], eyes) if eyes and pieces else (pieces[0] if pieces else "no shape there"))
+    elif len(a) >= 2 and a[0] == "nodes":
         m = cv2.imread(a[1], cv2.IMREAD_GRAYSCALE) > 127
         for piece in nodes_of(m, scale=float(a[2]) if len(a) > 2 else 1.0):
             print(piece)

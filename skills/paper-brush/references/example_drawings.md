@@ -1,6 +1,13 @@
+# Example drawings
+
+A minimal drawings file to start from: a head-and-shoulders figure on a 600-unit grid, and a wide banner. Save the
+block below as `example_drawings.py` next to `paper.py` (see `engine.md`) and run
+`python3 paper.py example_drawings.py out/`. The README's two small examples were drawn from it.
+
+```python
 """A minimal paper-brush drawings file: a head-and-shoulders figure on a 600-unit grid, plus a wide banner.
 
-    uv run ../scripts/paper.py example_drawings.py out/
+    python3 paper.py example_drawings.py out/
 """
 C = "c"
 SKIN, SKIN2, BLUSH = "#E9B48F", "#D6966F", "#E58B78"
@@ -38,3 +45,4 @@ DRAWINGS = {
         ],
     },
 }
+```

@@ -1,8 +1,13 @@
-#!/usr/bin/env -S uv run --script
-# /// script
-# requires-python = ">=3.10"
-# dependencies = ["numpy", "opencv-python-headless"]
-# ///
+# Engine: paper.py
+
+The whole renderer. It is plain Python 3 and needs `numpy` and `opencv-python` (or `opencv-python-headless`). It reads
+and writes local image files only: no network.
+
+**Setup, once per project:** save the code block below, exactly as it is, to a file named `paper.py` in the project's
+art folder (for example `Tools/art/paper.py`) or in a scratch folder. Keep drawings files beside it, and a `parts.py`
+there if you build a part library. Then run the commands in its docstring with `python3 paper.py ...`.
+
+```python
 """Paper brush: flat cut-paper illustration, drawn from pen paths.
 
 A picture is a short stack of flat shapes, each drawn like a pen-tool path: a few nodes, long arcs between them, and
@@ -37,10 +42,10 @@ NODES is a list of (x, y) for a point the curve flows through and (x, y, "c") fo
 of such lists (several pieces, one layer); pieces listed under "holes" are cut out. Several layers with the same
 "name" add up into one mask.
 
-    uv run paper.py DRAWINGS.py OUT_DIR [name ...]      # draws DRAWINGS.py's DRAWINGS dict (or KIDS) to OUT_DIR/<name>.png
-    uv run paper.py nodes MASK.png [scale]              # prints pen nodes for the white shape(s) in a mask: a starting point
-    uv run paper.py grid IMAGE OUT.png [step]           # a gridded copy of a reference, to read coordinates off
-    uv run paper.py lift IMAGE X Y [tol] [--eyes x1,y1,x2,y2]   # the flat shape under pixel X,Y as nodes (on the head's axes with --eyes)
+    python3 paper.py DRAWINGS.py OUT_DIR [name ...]      # draws DRAWINGS.py's DRAWINGS dict (or KIDS) to OUT_DIR/<name>.png
+    python3 paper.py nodes MASK.png [scale]              # prints pen nodes for the white shape(s) in a mask: a starting point
+    python3 paper.py grid IMAGE OUT.png [step]           # a gridded copy of a reference, to read coordinates off
+    python3 paper.py lift IMAGE X Y [tol] [--eyes x1,y1,x2,y2]   # the flat shape under pixel X,Y as nodes (on the head's axes with --eyes)
 
 Helpers for drawings files: scallop() for curls, plaits and wool; ribs() for knit bands; oval().
 """
@@ -364,3 +369,4 @@ if __name__ == "__main__":
             print("drew", dst / f"{name}.png")
     else:
         sys.exit(__doc__)
+```

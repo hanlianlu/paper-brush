@@ -32,20 +32,24 @@ Then ask Claude for something like *"draw a set of six cut-paper avatars for my 
 ```
 skills/paper-brush/
   SKILL.md                         when to use it, workflow, reusable face parts
-  scripts/paper.py                 the renderer (numpy + OpenCV; `uv run` installs them)
+  references/engine.md             the renderer, paper.py, as one code block (numpy + OpenCV)
   references/style.md              the style rules that make it read as paper
-  references/example_drawings.py   a portrait and a banner to start from
+  references/example_drawings.md   a portrait and a banner to start from
 examples/portraits/                twelve example avatars (all rights reserved, see License)
 ```
 
-Render the examples yourself:
+The renderer lives in a Markdown code block so the plugin holds only text and images. Claude saves it as `paper.py`
+the first time it draws in a project. To use it by hand, copy the block from `references/engine.md` into `paper.py`
+(and the one in `references/example_drawings.md` into `example_drawings.py`), install `numpy` and `opencv-python`,
+then:
 
 ```bash
-cd skills/paper-brush/references
-uv run ../scripts/paper.py example_drawings.py out/
+python3 paper.py example_drawings.py out/       # the two small examples above
+python3 paper.py grid source.jpg grid.png      # a gridded copy of a reference, to read coordinates off
+python3 paper.py nodes MASK.png                # a black-and-white mask as pen nodes
 ```
 
-`uv run …/paper.py nodes MASK.png` turns a black-and-white mask into pen nodes, a quick start when tracing shapes off a sketch.
+It reads and writes local image files only: no network, no hooks, nothing runs on install.
 
 ## License
 

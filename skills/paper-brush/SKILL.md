@@ -7,8 +7,11 @@ description: Draw flat cut-paper illustrations (portraits, avatars, characters, 
 
 A deterministic renderer for **flat cut-paper illustration**: every picture is a short stack of coloured paper shapes,
 each cut along a pen-tool path. Same drawing file in, same pixels out, so a set stays consistent and any shape can be
-nudged by editing a few numbers. Engine: `scripts/paper.py` (numpy + OpenCV, run with `uv run`); any aspect,
-paper colour and size.
+nudged by editing a few numbers. Any aspect, paper colour and size.
+
+**Engine setup, once per project:** the renderer ships as a code block in `references/engine.md`. Save that block,
+unchanged, as `paper.py` in the project's art folder (or a scratch folder) and run it with `python3 paper.py ...`
+(needs `numpy` and `opencv-python`). The commands below assume that file. If `paper.py` already exists there, reuse it.
 
 ## The look (keep to it)
 
@@ -21,15 +24,15 @@ fine even grain over everything.
 ## Workflow
 
 1. **Set up a drawings file** in the project (e.g. `Tools/art/drawings.py`) holding `DRAWINGS = {"name": {...}}`.
-   The format is in the docstring of `scripts/paper.py` (`uv run <skill dir>/scripts/paper.py` with no
-   arguments prints it). Copy `references/example_drawings.py` as a starting point.
+   The format is in the docstring of `paper.py` (`python3 paper.py` with no arguments prints it). Start from
+   the drawings file in `references/example_drawings.md`.
 2. **Pick an authoring grid** and, if you have one, a reference picture (a sketch, a painting, an approved image) laid
    on that grid. Read node coordinates off it at a known scale; a tiny lambda like `h = lambda *p: [(x/2, y/2, *r) for x, y, *r in p]`
    converts from the reference's pixels.
 3. **Rough the shapes from a mask** if useful: make a black/white mask of a region (colour threshold, hand mask) and run
-   `uv run <skill dir>/scripts/paper.py nodes MASK.png [scale]` — it prints nodes with corners already found. Then thin and tidy them
+   `python3 paper.py nodes MASK.png [scale]` — it prints nodes with corners already found. Then thin and tidy them
    by hand; the hand pass is what makes it look cut, not traced.
-4. **Render**: `uv run <skill dir>/scripts/paper.py path/to/drawings.py OUT_DIR [name …]` → `OUT_DIR/<name>.png`.
+4. **Render**: `python3 paper.py path/to/drawings.py OUT_DIR [name …]` → `OUT_DIR/<name>.png`.
 5. **Look, compare, adjust.** Put the result next to the reference (or the approved set) at the size it will be seen,
    e.g. `ffmpeg -i a.png -i b.png -filter_complex hstack cmp.png`, and open it. Fix one thing at a time: a node, a tone,
    a clip. Expect several rounds; commit when the owner approves.
@@ -46,9 +49,9 @@ When new pictures must join a set that already has a look (more avatars beside a
    frame the head takes, paper colour and grain.
 2. **Calibrate**: redraw one reference with the brush, put it beside the original, adjust until they match.
 3. **Lift the parts** that carry the style (eyes, brows, ear inners) from the references:
-   `uv run <skill dir>/scripts/paper.py lift REF.png X Y [tol] --eyes x1,y1,x2,y2` prints the flat shape under pixel
+   `python3 paper.py lift REF.png X Y [tol] --eyes x1,y1,x2,y2` prints the flat shape under pixel
    X,Y as nodes on that head's axes. Overlay to check; move the seed if it lands on skin.
-4. **Draw over the source**: `uv run <skill dir>/scripts/paper.py grid SOURCE.jpg grid.png` gives a gridded copy
+4. **Draw over the source**: `python3 paper.py grid SOURCE.jpg grid.png` gives a gridded copy
    (lines every 20 px, labels every 100) to read coordinates off. Few nodes per shape: a face about 16, a hair mass 20–40.
 5. **Mix-in test before showing anyone**: interleave the new pictures with the references in one grid at thumbnail
    size (about 480 px). If a new one can be picked out, it is not done. Then check each at full size beside its

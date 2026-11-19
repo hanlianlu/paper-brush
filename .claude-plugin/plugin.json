@@ -1,0 +1,10 @@
+{
+  "name": "paper-brush",
+  "version": "0.1.0",
+  "description": "Draw flat cut-paper illustrations (portraits, avatars, characters, simple scenes) as code: pen-tool paths, flat paper tones, crisp corners, soft fades and a fine paper grain. Deterministic, no image model.",
+  "author": { "name": "hanlianlu", "url": "https://github.com/hanlianlu" },
+  "homepage": "https://github.com/hanlianlu/paper-brush",
+  "repository": "https://github.com/hanlianlu/paper-brush",
+  "license": "MIT",
+  "keywords": ["illustration", "art", "avatar", "portrait", "cut-paper", "skill"]
+}

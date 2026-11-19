@@ -1,0 +1,15 @@
+{
+  "name": "paper-brush",
+  "description": "Flat cut-paper illustration for Claude, drawn as code.",
+  "owner": {
+    "name": "hanlianlu",
+    "url": "https://github.com/hanlianlu"
+  },
+  "plugins": [
+    {
+      "name": "paper-brush",
+      "source": "./",
+      "description": "Flat cut-paper illustration drawn as code: pen-tool paths, flat paper tones, soft fades, paper grain."
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 ---
 name: paper-brush
-description: Draw flat cut-paper illustrations (portraits, avatars, characters, simple scenes, icons) as code — pen-tool paths with long arcs and crisp corners, flat fills, a second tone with one hard edge and one fade, tapered lines, a soft blush, warm paper ground and fine paper grain; no outlines, no gradients, no AI image model. Use when a project needs a set of illustrations in one consistent hand-made paper look, needs to redraw or extend such a set (e.g. more avatars matching approved ones), or asks for the "paper brush" / 纸艺画笔 / 剪纸风 style.
+description: Draw flat cut-paper illustrations (portraits, avatars, characters, scenes, icons) as deterministic code, no image model. Use for a set in one paper look or to add pictures matching one.
 ---
 
 # Paper brush（纸艺画笔）

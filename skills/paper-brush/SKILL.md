@@ -9,9 +9,11 @@ A deterministic renderer for **flat cut-paper illustration**: every picture is a
 each cut along a pen-tool path. Same drawing file in, same pixels out, so a set stays consistent and any shape can be
 nudged by editing a few numbers. Any aspect, paper colour and size.
 
-**Engine setup, once per project:** the renderer ships as a code block in `references/engine.md`. Save that block,
-unchanged, as `paper.py` in the project's art folder (or a scratch folder) and run it with `python3 paper.py ...`
-(needs `numpy` and `opencv-python`). The commands below assume that file. If `paper.py` already exists there, reuse it.
+**Engine setup, once per project:** the renderer ships as a code block in `references/engine.md`. Copy it out with a
+command, never by retyping it: `awk '/^```python$/{f=1;next} /^```$/{f=0} f' references/engine.md > DIR/paper.py`, with DIR
+the project's art folder (or a scratch folder); the same command turns `references/example_drawings.md` into a drawings
+file to start from. Run it with `python3 paper.py ...` (needs `numpy` and `opencv-python`). The commands below assume
+that file. If `paper.py` already exists there, reuse it.
 
 ## The look (keep to it)
 
